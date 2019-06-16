@@ -1,0 +1,181 @@
+#
+Kod Sözdizim Rehberi
+
+Linux çekirdek kaynak kodu üzerinde geliştirmeler yapmak istiyorsanız, `Documentation/CodingStyle` dosyasında yer alan yönergelerin takip edilmesinde fayda vardır. Milyonlarca satırdan oluşan bu büyük yazılım içerisinde başkalarıyla birlikte çalışma yapabilmek için genel bir yönergenin takip edilmesi, çekirdek geliştiricilerinin hayatını kolaylaştırır.
+
+Bu noktada *Linus Torvalds*'a kulak verelim:
+
+> Coding style is very personal, and I won't force my views on anybody, but this is what goes for anything that I have to be able to maintain, and I'd prefer it for most other things too. Please at least consider the points made here.
+
+> First off, I'd suggest printing out a copy of the [GNU coding standards](http://www.gnu.org/prep/standards.html), and **NOT** read it. Burn them, it's a great symbolic gesture.
+
+Linus özetle kod sözdizim tercihlerinin kişiye göre değişeceğini ama süreci yönetilebilir kılma adına bir şeyler yapılması gerekliliğinden bahsediyor. Devamında da bunu destekler biçimde, **GNU Sözdizim Rehberi** dokümanının çıktısını alıp okumadan yakmamızı salık veriyor.
+
+## Girinti ve Hizalama
+
+**TAB** için **8** boşluk karakteri kullanılır. Geçmişte bunu 4'e hatta 2'ye indirmek üzerine çeşitli tartışmalar döndü. Ancak Torvalds bu tartışmaları **&pi;** sayısını **3** olarak almak isteyenlerdekilere benzetiyor ve faydasız buluyor.
+
+8 karakter gibi başlangıçta fazla gibi görünen boşluk sayısı, günde 20 saat çekirdek kodu inceleyen biri için bir bloğun nerede başlayıp nerede bittiğini kolay göstermesi açısından önemlidir.
+
+8 karakterlik TAB kullanımı sonucudan kodun çok fazla sağ tarafa doğru ilerlediği için 80 karakterlik konsol ekranında okunmayı zorlaştırdığından şikayet edenlere Torvalds, *zaten 3 seviyeden fazla girinti yapmanız gerektiyse bir şeyleri yanlış yapıyorsunuz demektir, en iyisi oturup kodu düzeltin şeklinde* öneride bulunuyor.
+
+Tahmin edebileceğiniz üzere çekirdek kodu içerisinde 3 seviyeden fazla girintiye sahip olan pek çok kod bulunmaktadır. Ancak bu boyuttaki bir yazılım projesi için girinti ve blok kullanımının görece minimum düzeyde tutulduğunu söyleyebiliriz. Torvalds ile ters düşmemek için özellikle yeni başlayanların söz dinlemesinde fayda var.
+
+## Kıvrık Parantez
+
+Kıvrık parantezlerin kullanımında **Kernighan & Ritchie** metodu tercih edilmiştir.
+
+Fonksiyon içerisinde kıvrık parantez koşullu ifadenin hemen bitiminde açılıp, blok sonunda ayrı bir satırda kapatılır:
+
+```c
+if (x == condition) {
+// code here
+}
+```
+
+Fonksiyon tanımlarında ise kıvrık parantez fonksiyon tanımını takip eden satırda açılıp, fonksiyon bitiminde ayrı bir satrıda kapatılır:
+
+```c
+int my_super_function(int a, int b)
+{
+// code here
+}
+```
+
+**do** .. **while** döngülerinde aşağıdaki yapı kullanılır:
+
+```c
+do {
+// code here
+} while (x == y);
+```
+
+**if** .. **else** deyimlerinde aşağıdaki yapı kullanılır:
+
+```c
+if (x < y) {
+...
+} else if (x > y) {
+...
+} else {
+...
+}
+```
+
+## İsimlendirme Kuralları
+
+**C** dili genel olarak *Spartan Programlama* mantığı etrafında bir kullanım kültürü oluşturmuştur. Minimalist, az yer kaplayan ama halen daha büyük oranda anlaşılabilir bir kod yazımı tercih edilir.
+
+Örneğin bir **Pascal** programcısının `ThisVariableIsATemporaryCounter` şeklinde isimlendirdiği bir değişkenin **C** programcısı tarafından basitçe `tmp` şeklinde isimlendirileceğini tahmin edebiliriz: yazması kolay, okunurluğu da tamamen öldürmüyor, büyük oranda anlaşılıyor.
+
+Bununla birlikte global değişkenlerde açıklayıcı bir isim kullanması şart koşulmudur. Genel olarak global değişkenlerin **sadece ve sadece zaruri olduğunda** kullanılması ve kullanıldığında derdini net bir şekilde anlatabilecek bir isimlendirme yapılması istenmektedir.
+
+Fonksiyon isimlendirmelerinde de işlevini açıkça ifade eden bir yapı kullanılması istenir. Örneğin aktif olan kullanıcıların sayısını bulan bir fonksiyon için `cntuser()` gibi bir isim kabul edilmez, bunun yerine `count_active_users()` gibi bir isim kullanılmalıdır.
+
+Değişken ve fonksiyon isimlendirmelerinde **Macar Notasyonu** kullanımı kesinlikle istenmez. Derleyici zaten değişken veya fonksiyonun tipini bildiğine göre, bu şekildeki kullanım kodu okuyan beyinlere hasar vermek dışında bir fayda vermeyecektir. Torvalds bu noktada *Microsoft* platformlarında bu kadar hata olmasına şaşmamalı şeklinde düşünüyor. Katılmak mümkün, bu notasyonu literatürden çıkarmak çok yerinde olurdu.
+
+Yerel değişkenlerin de kısa ve tam yerinde kullanılması istenir. Örneğin bir döngü içerisinde sayaç tutmanız gerekiyorsa, bunun için `i` ismini kullanın. `loop_counter` şeklinde açıklayıcı bir isim fazladan pek bir şey kazandırmayacaktır.
+
+## Typedef Kullanımı
+
+Bu konudaki kural basit: çok istisnai bir durum olmadıkça typedef **kullanmayın**.
+
+```c
+vps_t a;
+```
+
+şeklindeki bir tanım açıklayıcı değil. Onun yerine
+
+```c
+struct virtual_container a;
+```
+
+şeklindeki gibi, `struct` anahtar kelimesi ile birlikte daha açıklayıcı yapı ismini kullanın.
+
+Genel bir kural olarak, elemanlarına erişmek için _accessor_ metodları kullanmanız gereken opak veri tiplerinin dışında **typedef** kullanımından kaçının.
+
+## Fonksiyonlar
+
+Fonksiyonlar sadece tek bir işi iyi yapacak şekilde ve kısa olmalıdır. Kısalıktan kasıt, 80x24'lük ANSI konsol ekranını baz aldığımızda bir fonksiyonun maksimum 2 ekran boyutu kadar yer kaplaması gerektiğidir.
+
+Eğer fonksiyon içerisinde yapılan iş basit ve temiz olmasına rağmen, örneğin bir `switch..case` bloğu içerisinde çok sayıda değeri kontrol etmesi gerekiyorsa ve bu nedenle 2 ekran sınırını aşıyorsa, bu durum hoş karşılanır, sorun edilmez.
+
+Fonksiyonların değerlendirilmesindeki bir diğer kriter de yerel değişken kullanımıdır. Maksimum 5-10 arasında yerel değişken kullanımı önerilmektedir. İnsan beyni genelde 7 farklı şeyi takip edebilir. Bu sayıların aşılması durumunda bir şeyleri yanlış yaptığınızı düşünmeniz, yeni bir tasarım yapmanız veya mevcut fonksiyonu, yardımcı ek fonksiyonlara bölmeniz beklenir.
+
+Fonksiyonların bitiminde 1 adet boş satır bırakmanız istenmektedir. Böylece gözle daha kolay takip edilebilecektir. Ancak bu durumun istisnası olarak, eğer fonksiyonunuz kernel içerisinde başka yerlerden de kullanılacağı için _export_ edilecekse, ilgili `EXPORT` makrosunu hemen fonksiyonun bitiminde tanımlamanız ve sonrasında boş satır bırakmanız beklenmektedir:
+
+```c
+int system_is_up(void)
+{
+return system_state == SYSTEM_RUNNING;
+}
+EXPORT_SYMBOL(system_is_up);
+```
+
+Ek olarak başlık dosyalarında fonksiyonlarınızı tanımlarken okunabilirliği artırmak için, parametre bloğunda sadece değişkene ait veri tipini değil, değişken ismini de belirtmeniz beklenir.
+
+## Goto Kullanımı
+
+Kernel kodu ile uğraşırken yerinde `goto` kullanımı okunabilirliği ve verimliliği artırır.
+
+Bununla birlikte etiket isimlendirmelerine özen göstermeniz beklenir. _GW-BASIC_ alışkanlıklarından gelen `err1:`, `err2:` gibi etiketler kullanmamalısınız. Onun yerine `goto` sonrasında ne olacağını ve nereyi etkilediğini net bir şekilde belirtmeniz tavsiye edilmektedir. Örneğin `out_buffer:` şeklindeki bir etiket, `goto` işlemi sonrası fonksiyondan çıkılacağını ve `buffer` ile ilgil olduğunu göstermektedir.
+
+```c
+int fun(int a)
+{
+int result = 0;
+char *buffer;
+buffer = kmalloc(SIZE, GFP_KERNEL);
+if (!buffer)
+return -ENOMEM;
+if (condition1) {
+while (loop1) {
+...
+}
+result = 1;
+goto out_buffer;
+}
+...
+out_buffer:
+kfree(buffer);
+return result;
+}
+```
+
+## Yorum Satırları
+
+Yorum satırlarını kullanmak güzeldir ama fazla kullanıldığında tehlikeli olabilir. Genel prensip olarak yorum satırlarında fonksiyonunuzun nasıl çalıştığını değil, basitçe ne yaptığını anlatmanız yeterlidir.
+
+Yorum satırları fonksiyonun tanımının hemen üzerinde yer almalı, fonksiyon içerisinde yorumlara yer verilmemelidir.
+
+Yorum satırları için Linux kernel kodunda **C89** `/* ... */` sitili kullanılır. Tek satırlık **C99** stili `// ...` yorumlara izin verilmez.
+
+Fonksiyon başlangıcındaki örnek bir yorum bölümü şu şekilde olabilir:
+
+```c
+/*
+* This is the preferred style for multi-line
+* comments in the Linux kernel source code.
+* Please use it consistently.
+*
+* Description: A column of asterisks on the left side,
+* with beginning and ending almost-blank lines.
+*/
+```
+
+## Kconfig Konfigürasyon Dosyaları
+
+Kconfig konfigürasyon dosyalarındaki sözdizim kuralları biraz farklıdır.
+
+`config` anahtar kelimesi altındaki satırlar **TAB** ile girinti yapılarak yazılır. `help` anahtar kelimesini takip eden yardım satırları ise buna ek olarak, **2** adet ek boşluk kullanılarak yazılmaktadır:
+
+```
+config NET_FC
+bool "Fibre Channel driver support"
+depends on SCSI && PCI
+help
+Fibre Channel is a high speed serial protocol mainly used to connect
+large storage devices to the computer; it is compatible with and
+intended to replace SCSI.
+```
+

@@ -1,0 +1,35 @@
+#
+Geliştirme Süreci ve Versiyonlar
+
+Linux çekirdeğinin geliştirme süreci tamamen gönüllü eforlara dayanmaktadır. Bu sebeple ticari dünyanın aksine sıkı tanımlanmış yol haritaları (roadmap) veya her X ayda bir çıkartılması beklenen sürüm hedefleri bulunmaz.
+
+Bunun yerine teknik olarak izlenecek rehberler tariflenmiş olup bu çerçevede proje her türden katkıya sürekli açık durumdadır. Elbette bazı önemli geliştirmelerin geniş bir geliştirici kitlesiyle tartışılması, belli başlı kararlar alınması ve bazen bu kararlar neticesinde hatırı sayılır oranda yapısal değişikliklere gidildiği de olmaktadır.
+
+## Geliştirme Modeli
+
+Yeni versiyonlar günümüzde halen bizzat Torvalds tarafından çıkartılmaktadır. Torvalds gönderilen yeni kodları ve çeşitli hatalara ilişkin yamaları bir araya getirerek sürümü oluşturur ve test süreçleri başlar. Bu noktadan sonra ortalama 10 hafta içerisinde yeni versiyon duyurulur. Bu şekildeki kernel versiyonları **vanilla** veya **mainline** şeklinde anılır.
+
+Bazı Linux dağıtımları doğrudan **vanilla** kernel versiyonunu kullanırken, _Debian_, _RedHat_ gibi bazı dağıtımlar ise çeşitli ek sürücüler, yamalar ve özellikleri içeren ayrı bir kernel versiyonu kullanırlar. Bu yöntemi izleyen dağıtımlarda kernel versiyonu çok sık güncellenmez, çoğu zaman dağıtımın bir sonraki versiyonu çıkana kadar aynı kernel versiyonu kullanılır (Örnek olarak Debian Wheezy versiyonunda kernel 3.2 kullanılırken Debian Jessie versiyonunda kernel 3.16 kullanılmaktadır). Bununla birlikte yeni kernel versiyonlarında düzeltilen önemli bir güvenlik açığı veya fonksiyonel düzenleme olursa, ilgili dağıtımların kernel paketleme ekipleri tarafından bu özellikler dağıtımla birlikte verilen kernel versiyonuna _backport_ edilir.
+
+## Kaynak Kod Yönetim Sistemi
+
+Linux projesi gibi büyük bir kaynak kod kümesi için kaynak kod yönetim sistemi de büyük önem taşımaktadır.
+
+Linus Torvalds, _subversion_, _cvs_ gibi merkezi yapıdaki çözümlere karşı hep mesafeli olmuştur. Merkezi yapıdaki çözümler birbiriyle yakın irtibat halinde çalışma imkanı olan ve az sayıda geliştiriciden oluşan projeler için kabul edilebilir olmakla birlikte, Linux projesindeki geliştirme modelinde çok dertler açmaktadır.
+
+2002 yılında Torvalds önemli bir karar alarak, Linux kernel projesini teknik özellikleri açısından kendisini çok tatmin eden [Bitkeeper](http://www.bitkeeper.com) platformu üzerinden yönetmeye karar verdi.
+
+Bitkeeper zamanının ötesinde, dağıtık bir kaynak kod yönetim sistemi ve pek çok yeni özellik sunuyordu ancak ücretsiz bir yazılım değildi ve kaynak kodu kapalıydı. Bununla birlikte Linux projesine bedelsiz olarak hizmet veriyorlardı.
+
+Linux gibi bir projenin kapalı kodlu bir kaynak kod yönetim sistemi üzerinden yönetilmesi zamanında epey tartışmalara yol açmıştır.
+
+2005 yılında **Andrew Tridgell** Bitkeeper uygulama protokolünü _reverse-engineering_ yoluyla çözmeye çalıştı. Buradaki amacı Bitkeeper ile entegre çalışabilecek araçlar üretmekti. Andrew Tridgell _reverse-engineering_ konusunda çok başarılı bir araştırmacıydı ve özellikle Microsoft Windows ağlarındaki dosya paylaşımı için kullanılan **Server Message Block** protokolünü benzeri yöntemlerle çözmesiyle tanınıyordu. Aynı zamanda önemli Linux servislerinden **Samba**'nın yanı sıra **rsync**, **talloc** gibi projeleri geliştirmişti.
+
+Andrew'in bu çalışması Bitkeeper'ın sahibi olan firmanın tepkisini çekti ve Linux projesi için verilen ücretsiz lisansı iptal ettiler.
+
+Buna cevaben Linus Torvalds kolları sıvayıp dağıtık bir kaynak kod yönetim sisteminin geliştirmesine başladı. Aradan sadece 2 ay geçtikten sonra, bugün en çok kullanılan dağıtık kaynak kod yönetim sistemi olan [Git](https://git-scm.com) ortaya çıkmış ve Linux kernel kaynak kodları için hizmet vermeye başlamıştı.
+
+> Kişisel olarak **Git** projesini neredeyse Linux kadar önemli buluyorum. Bugün nasıl ki bir browser yazmak işletim sistemi yazmaktan çoğu zaman daha zor ise, Git'in sahip olduğu fonksiyonlar düşünüldüğünde Torvalds'ın yaptığı en önemli ve karmaşık işlerden biri olduğunu söyleyebiliriz.
+
+
+

@@ -1,0 +1,28 @@
+#
+Linux Çekirdeği
+
+Linux, Unix felsefesi ve tasarım prensipleri doğrultusunda geliştirilmiş açık kaynak kodlu bir işletim sistemi çekirdeğidir. Çekirdeğin kaynak kodları GNU Genel Kamu Lisansı çerçevesinde özgürce dağıtılabilir, değiştirilebilir ve kullanılabilir.
+
+Linux, 1991 yılında Finlandiyalı bir üniversite öğrencisi olan _Linus Benedict Torvalds_ tarafından geliştirilmeye başlanmıştır. _Torvalds_, **25 Ağustos 1991**'de, _comp.os.minix_ haber grubuna gönderdiği mesajda yeni bir işletim sistemi geliştirmekte olduğunu ve ilgilenen herkesin yardımını beklediğini yazdı. Daha sonra **17 Eylül 1991**'de Linux'un ilk sürümü olan **0.01**'i İnternet'te yayınladı. Kısa bir süre sonra, **5 EKim 1991**'de temel özellikleriyle beraber ilk resmi Linux sürümü olan 0.02'yi yayınladı. Linux ismi ilk olarak **0.02** versiyonunda geçmektedir.
+
+Linus Torvalds, hâlen aktif olarak çekirdek geliştirme ekibinde olup halen en fazla kod gönderenler arasında ilk sıralarda yer almaktadır.
+
+## Kaynak Kod Boyutu
+
+Linux çekirdeğinin prematüre hallerini es geçip **1994** yılında duyurulan **1.0** versiyonunu ele alacak olursak, proje yaklaşık **6 MB** yer kaplamaktaydı ve **34** dizin, **561** dosya içeriyordu. Kaynak kod satır sayısı ise tam olarak **165165** idi.
+
+Mayıs **2015** tarihinde yayınlanan **4.0.4** versiyonunun kaynak kodları `tar.xz` arşivi haline getirildiğinde **78 MB** yer kaplamaktadır. Arşiv dosyası açıldığında ise **3159** dizin, **48948** dosya çıkmakta ve toplam boyut **641 MB** şeklinde olmaktadır. Proje yaklaşık **20 milyon** kod satırından oluşmaktadır.
+
+Bu boyuttaki devasa bir yazılım projesinin belirli bir şirket çatısı olmaksızın binlerce insanın katkılarıyla yürütülebiliyor olması da başlı başına bir başarı noktası olarak değerlendirilmelidir. Sürecin yönetilebilir alt parçalara ayrılması ve sorumlulukların dağıtılması, karar alma mekanizmalarının işletimi, test, sürüm ve yol haritası planlama vb. gibi adreslenmesi gereken tüm başlıkların, bir an için _Enterprise_ bakış açısıyla büyük bir şirket tarafından gerçekleştirildiğini ve halihazırda Linux'un desteklediği tüm platformları desteklediğini düşünelim:
+
+* Acaba kaç yıl sürerdi?
+* Nasıl bir maliyet ortaya çıkardı?
+* Daha iyi olur muydu?
+
+## Desteklenen Mimariler
+
+Güncel Linux çekirdeği, **29** farklı mimariyi (yazı ile yirmi dokuz) desteklemektedir.
+
+Desteklenen mimariler Alpha, Analog Devices (Blackfin), ARM, Atmel AVR32, Axis Etrax CRIS, Texas TMS320 DSP Ailesi, Motorola 68K, Fujitsu FR-V, Qualcomm Hexagon, Hewlett-Packard PA-RISC, Renesas (Hitachi) H8, IBM 31bit System/390 ve 64bit Z Mainframe, Intel IA-64 Itanium, x86, Mitsubishi M32R, Xilinx Microblaze, MIPS, Panasonic MN103, Open RISC, Power (IBM), PowerPC, Sparc 32 Bit, Ultra Sparc 64 bit, SuperH, Synopsys, S+core, Tilera, Xtensa ve Unicore32 şeklindedir.
+
+

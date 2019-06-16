@@ -1,0 +1,28 @@
+#
+Giriş
+
+Gömülü Linux kitabı, bu alanda gerçekleştirdiğimiz eğitim programlarımızda işlediğimiz konuların biraraya getirilmesi fikriyle oluştu.
+
+Eğitim için hazırladığımız belgelerin kitap formatında düzenlenme ve güncelleme çalışmaları devam ediyor. Sürecin yarısına yaklaştığımızdan başkalarına da faydalı olabileceğini düşünerek, kitap içeriğini genel erişime açıyoruz.
+
+Gömülü Linux kitabı bu alanda çalışmak isteyenlere başlangıç seviyesinde bilgiler sunmasının yanı sıra, uzun yıllardır çalışan kişiler için de öğretici unsurlar barındırmaktadır. Amacımız spesifik konulara girmek yerine öğrenme süreci açısından en fazla fayda üretecek başlıklara değinmek şeklinde olmakla birlikte, bu dengeyi tutturmanın kolay olmadığının da bilincindeyiz. Tam da bu noktada içerikle ilgili geri bildirimlerden memnuniyet duyacağımızı belirtiriz.
+
+## Sorularınız İçin
+
+Kitapla ilgili öneri ve düşüncelerinizi _mdemirten_ at _yh.com.tr_ adresinden bizimle paylaşabilirsiniz.
+
+Ek olarak teknik sorularınızı http://www.linux-tips.org sitesinde özellikle **[Embedded](http://linux-tips.org/c/embedded)** tartışma başlığı altında iletmeniz halinde, yanıtlamaya çalışacağımızı belirtmek isteriz. Katkı sağlayabilecek daha çok kişiye ulaşmak için site İngilizce olarak hazırlanmaktadır.
+
+## Yardımcı Kitap
+
+Henüz genel erişime açılmamış olan Linux Sistem Programlama kitabımızın da okunmasını öneriyoruz. Mart ayı içerisinde ilk versiyonu açmış olmayı planlıyoruz.
+
+## Telif Hakkı
+
+Bu kitabın bütün telif hakları Murat Demirten'e aittir.
+Kitabın tamamı veya bir kısmı, "**kaynak gösterildiği ve değişiklik yapılmadığı**" takdirde, herhangi bir izne gerek kalmadan, her türlü ortamda çoğaltılabilir, dağıtılabilir, kullanılabilir.
+
+## Teşekkür
+
+İçeriğe katkılarından dolayı Serkan Eser'e teşekkürlerimi sunuyorum, katkılarının devamını bekliyoruz :)
+
