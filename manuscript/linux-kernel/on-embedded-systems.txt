@@ -1,9 +1,7 @@
-#
-Gömülü Sistemlerdeki Kullanımı
+# Gömülü Sistemlerdeki Kullanımı
 
 Linux çekirdeği 2000'li yılların başından itibaren giderek artan hızda, gömülü sistemlerde kendine kullanım alanı bulmuştur.
 
 Önceleri _Windows CE_, _VxWorks_ vb. önemli rakipleri varken, ilerleyen yıllarda neredeyse standart haline gelmiş ve yoğun bir kullanım oranı yakalamıştır.
 
 Günümüzde başta akıllı telefonlar olmak üzere, tüketici elektroniği dünyasında televizyon, setüstü-kutu, DSL modem, uydu alıcı, güvenlik duvarı, ağ depolama birimleri, el terminali, kontrol panel birimleri, navigasyon cihazları vb. pek çok farklı alanda kullanılmaktadır.
-

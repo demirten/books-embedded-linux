@@ -1,5 +1,4 @@
-#
-Kod Sözdizim Rehberi
+# Kod Sözdizim Rehberi
 
 Linux çekirdek kaynak kodu üzerinde geliştirmeler yapmak istiyorsanız, `Documentation/CodingStyle` dosyasında yer alan yönergelerin takip edilmesinde fayda vardır. Milyonlarca satırdan oluşan bu büyük yazılım içerisinde başkalarıyla birlikte çalışma yapabilmek için genel bir yönergenin takip edilmesi, çekirdek geliştiricilerinin hayatını kolaylaştırır.
 
@@ -29,7 +28,7 @@ Fonksiyon içerisinde kıvrık parantez koşullu ifadenin hemen bitiminde açıl
 
 ```c
 if (x == condition) {
-// code here
+        // code here
 }
 ```
 
@@ -38,7 +37,7 @@ Fonksiyon tanımlarında ise kıvrık parantez fonksiyon tanımını takip eden 
 ```c
 int my_super_function(int a, int b)
 {
-// code here
+        // code here
 }
 ```
 
@@ -46,7 +45,7 @@ int my_super_function(int a, int b)
 
 ```c
 do {
-// code here
+        // code here
 } while (x == y);
 ```
 
@@ -54,11 +53,11 @@ do {
 
 ```c
 if (x < y) {
-...
+        ...
 } else if (x > y) {
-...
+        ...
 } else {
-...
+        ...
 }
 ```
 
@@ -107,7 +106,7 @@ Fonksiyonların bitiminde 1 adet boş satır bırakmanız istenmektedir. Böylec
 ```c
 int system_is_up(void)
 {
-return system_state == SYSTEM_RUNNING;
+        return system_state == SYSTEM_RUNNING;
 }
 EXPORT_SYMBOL(system_is_up);
 ```
@@ -123,22 +122,24 @@ Bununla birlikte etiket isimlendirmelerine özen göstermeniz beklenir. _GW-BASI
 ```c
 int fun(int a)
 {
-int result = 0;
-char *buffer;
-buffer = kmalloc(SIZE, GFP_KERNEL);
-if (!buffer)
-return -ENOMEM;
-if (condition1) {
-while (loop1) {
-...
-}
-result = 1;
-goto out_buffer;
-}
-...
+    	int result = 0;
+    	char *buffer;
+    
+    	buffer = kmalloc(SIZE, GFP_KERNEL);
+    	if (!buffer)
+    	        return -ENOMEM;
+    
+    	if (condition1) {
+        		while (loop1) {
+        			...
+        		}
+        		result = 1;
+        		goto out_buffer;
+    	}
+    	...
 out_buffer:
-kfree(buffer);
-return result;
+    	kfree(buffer);
+    	return result;
 }
 ```
 
@@ -153,14 +154,14 @@ Yorum satırları için Linux kernel kodunda **C89** `/* ... */` sitili kullanı
 Fonksiyon başlangıcındaki örnek bir yorum bölümü şu şekilde olabilir:
 
 ```c
-/*
-* This is the preferred style for multi-line
-* comments in the Linux kernel source code.
-* Please use it consistently.
-*
-* Description: A column of asterisks on the left side,
-* with beginning and ending almost-blank lines.
-*/
+	/*
+	 * This is the preferred style for multi-line
+	 * comments in the Linux kernel source code.
+	 * Please use it consistently.
+	 *
+	 * Description:  A column of asterisks on the left side,
+	 * with beginning and ending almost-blank lines.
+	 */
 ```
 
 ## Kconfig Konfigürasyon Dosyaları
@@ -171,11 +172,13 @@ Kconfig konfigürasyon dosyalarındaki sözdizim kuralları biraz farklıdır.
 
 ```
 config NET_FC
-bool "Fibre Channel driver support"
-depends on SCSI && PCI
-help
-Fibre Channel is a high speed serial protocol mainly used to connect
-large storage devices to the computer; it is compatible with and
-intended to replace SCSI.
+    bool "Fibre Channel driver support"
+    depends on SCSI && PCI
+    help
+      Fibre Channel is a high speed serial protocol mainly used to connect
+      large storage devices to the computer; it is compatible with and
+      intended to replace SCSI.
 ```
+
+
 

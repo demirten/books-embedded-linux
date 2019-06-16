@@ -1,5 +1,4 @@
-#
-Geliştirme Süreci ve Versiyonlar
+# Geliştirme Süreci ve Versiyonlar
 
 Linux çekirdeğinin geliştirme süreci tamamen gönüllü eforlara dayanmaktadır. Bu sebeple ticari dünyanın aksine sıkı tanımlanmış yol haritaları (roadmap) veya her X ayda bir çıkartılması beklenen sürüm hedefleri bulunmaz.
 

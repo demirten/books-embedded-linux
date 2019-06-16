@@ -1,5 +1,4 @@
-#
-Linux Çekirdeği
+# Linux Çekirdeği
 
 Linux, Unix felsefesi ve tasarım prensipleri doğrultusunda geliştirilmiş açık kaynak kodlu bir işletim sistemi çekirdeğidir. Çekirdeğin kaynak kodları GNU Genel Kamu Lisansı çerçevesinde özgürce dağıtılabilir, değiştirilebilir ve kullanılabilir.
 

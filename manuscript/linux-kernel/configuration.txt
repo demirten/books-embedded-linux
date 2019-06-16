@@ -1,0 +1,195 @@
+# Konfigürasyon Süreci ve Kbuild/Kconfig Sistemi
+
+Konfigürasyon sürecinin amacı, derleme işlemi sonrasında oluşacak olan kernel imajının sahip olacağı özelliklerin belirlenmesidir. Bu işlem tamamlandıktan sonra, belirlenen özellikler doğrultusunda derleme işlemi yürütülebilir.
+
+## Konfigürasyon
+
+Konfigürasyon süreci oldukça zaman alıcı bir işlemdir. Derlenecek olan kernel imajının sahip olacağı özellikleri tek tek seçmeye çalışmak saatlerce sürebilir. Eğer karşımıza soru olarak çıkartılan seçeneklerin pek çoğu hakkında ön bilgimiz yoksa -ki çoğunlukla öyle olacaktır-, seçenekler hakkında ek bilgi alma ve karar verme sürecini de hesabımıza eklediğimizde bu süreç günlerce sürebilir.
+
+Elbette konfigürasyon için bir kaç gün zaman ayırmayacağız ancak Gömülü Linux veya genel olarak Linux alanında bilginizi bir seviye daha ileriye taşımanın yollarından birinin, bu sürece geniş bir zaman ayırıp kernel içerisindeki teknolojileri incelemek ve ilgili dokümanları ek referanslarıyla birlikte okumaktan geçtiğini unutmayın.
+
+Konfigürasyon işleminin sonucunda `.config` adında bir adet dosya üretilecektir. Dolayısıyla eğer kullanacağınız sistem için daha önceden üretilmiş bir konfigürasyon dosyası var ise onu baz alarak veya doğrudan kullanarak da işlem yapabilirsiniz.
+
+Özellikle gömülü sistemler söz konusu olduğunda kullanacağınız board için üretici tarafından önceden hazırlanmış bir konfigürasyon dosyası genellikle bulunur. Bu konfigürasyon dosyasını kullanarak board üreticinizin sağladığı veya önerdiği kernel kaynak kodlarını derlediğinizde, kullanacağınız board ile uyumlu bir kernel imajı çıkmasını beklersiniz.
+
+Hazır bir konfigürasyon dosyası gelmiş olsa dahi, bu dosyayı baz alarak konfigürasyon sürecinin üzerinden geçilmesi ve konfigürasyon dosyasının biraz daha iyileştirilmesi önerilir. Üreticiden gelen konfigürasyon dosyaları genellikle ürünü kullanacağınız senaryoda esasen ihtiyaç duymayacağınız pek çok bileşene dair desteği de içerir. Bu dosyayı iyileştirmeye çalışmak hem ürünü daha iyi tanımanızı hem de daha küçük bir kernel imajı elde etmenizi sağlayacaktır.
+
+## Kbuild / Kconfig Sistemi
+
+700 MB'a yaklaşan kaynak kod büyüklüğü ve onbinlerce derleme seçeneği opsiyonu, Linux kernel derleme sürecinin yönetimine dair de ek bir sistem geliştirilmesi ihtiyacını doğurmuştur.
+
+**Kbuild** sistemi ve beraberindeki **Kconfig** dili bu amaçla geliştirilmiştir. Konfigürasyon sürecine genel olarak baktığımızda, çok sayıda seçenek ve birbirlerine olan bağımlılık kurallarından oluşan bir veritabanı içerisinden, kendi içinde tutarlı bir alt küme oluşturma işlemi olarak görebiliriz.
+
+Aşağıda bir kaç seçenek kümesine dair hiyerarşi gösterilmektedir:
+
+	+- Code maturity level options
+	|  +- Prompt for development and/or incomplete code/drivers
+	+- General setup
+	|  +- Networking support
+	|  +- System V IPC
+	|  +- BSD Process Accounting
+	|  +- Sysctl support
+	+- Loadable module support
+	|  +- Enable loadable module support
+	|     +- Set version information on all module symbols
+	|     +- Kernel module loader
+	+- ...
+
+Örnekteki her bir eleman, opsiyonel olarak bağımlılık kuralları tanımlamış olabilir. Örneğin **PCI** veriyolu üzerinde çalışacak bir ethernet kartı doğal olarak **PCI Veriyolu Desteği**'ne bağımlı olduğundan, bu şekilde bir bağımlılık kuralının tanımlanması halinde, PCI desteği seçilmediğinde konfigürasyon sürecinin ilerleyen aşamalarında ilgili ethernet kartlarının karşımıza bir seçenek olarak gelmemesi gerekir. Eğer süreç bu şekilde işlemez ise, birbiriyle çelişen konfigürasyon sembollerini seçmemiz işten bile değildir.
+
+Bağımlılık kurallarını doğru biçimde tüm sistem genelinde uyguladığımızda, bu kadar geniş bir seçim kümesi içerisinden her zaman anlamlı bir küme oluşturma imkanına sahip oluruz.
+
+Kconfig dili oldukça basittir ve öncesinde çok fazla bilgi sahibi olmasanız dahi, yeterince örnek içeren bir Kconfig dosyasına bakıldığında kullanımı kendiliğinden anlaşılabilir.
+
+> `Kbuild` sistemini anlatan dokümanlara, kernel kaynak kodu altında `Documentation/kbuild` dizininde erişebilirsiniz.
+
+### Örnek Kconfig Dosyası
+
+Kısa bir örnekle başlamak için kernel kaynak kodu içerisindeki `drivers/android/Kconfig` dosyasını inceleyelim:
+
+```
+menu "Android"
+
+config ANDROID
+        bool "Android Drivers"
+        ---help---
+          Enable support for various drivers needed on the Android platform
+
+if ANDROID
+
+config ANDROID_BINDER_IPC
+        bool "Android Binder IPC Driver"
+        depends on MMU
+        default n
+        ---help---
+          Binder is used in Android for both communication between processes,
+          and remote method invocation.
+
+          This means one Android process can call a method/routine in another
+          Android process, using Binder to identify, invoke and pass arguments
+          between said processes.
+
+config ANDROID_BINDER_IPC_32BIT
+        bool
+        depends on !64BIT && ANDROID_BINDER_IPC
+        default y
+        ---help---
+          The Binder API has been changed to support both 32 and 64bit
+          applications in a mixed environment.
+
+          Enable this to support an old 32-bit Android user-space (v4.4 and
+          earlier).
+
+          Note that enabling this will break newer Android user-space.
+
+endif # if ANDROID
+
+endmenu
+```
+
+Dosya öncelikle bir `menu` tanımıyla başlıyor. Bu sayede ileride karşımıza ismi "Android" olan bir menü çıkacağını anlıyoruz.
+
+Sonraki adımda `config` anahtar kelimesi ile `ANDROID` sembolü tanımlanmış. Sembolün tipi `bool` olarak belirtildiğinde var/yok şeklinde ikili bir seçim içerdiğini anlıyoruz. Sembolün tipinden sonra gelen açıklama satırında ise ilgili sembolün hangi metinle karşımıza çıkacağını göstermektedir: Android Drivers
+
+Hemen altında `---help---` ile başlayan bölümde tahmin edebileceğiniz üzere, bu sembolle ilgili yardım alınmak istendiğinde gösterilecek olan metin yer almaktadır.
+
+Sonrasında dosyanın geri kalanın bir `if ANDROID` bloğu içerisine alındığını görmekteyiz. Bunun anlamı eğer üst bölümde tanımlanan `bool` tipindeki `ANDROID` sembolü seçilirse bu konfigürasyon seçeneklerinin aktif olacağı ve kullanıcıya gösterileceği, aksi takdirde bu seçeneklerin hiç gösterilmeyeceğidir.
+
+Bir sonraki sembolümüz gene `bool` veri tipinde `ANDROID_BINDER_IPC` şeklindedir. Bu sembolün `depends on` anahtar kelimesi kullanılarak `MMU` sembolüne bağımlı olduğu belirtilmiştir. Dolayısıyla konfigürasyon sürecinin diğer adımlarında `MMU` sembolü seçilmedi ise bu özellik de seçilemeyecektir. Ek olarak `default` anahtar kelimesiyle öntanımlı değerinin hayır anlamında `n` şeklinde olduğu belirtilmiştir.
+
+Son sembolümüz gene `bool` tipinde `ANDROID_BINDER_IPC_32BIT`'dir. Bu sembol için öntanımlı değer evet anlamında `y` olarak verilmiştir. Bununla birlikte sembolün seçilebilmesi için verilen bağımlılık kurallarında, mimarinin 64 bit olamayacağı (`!64BIT`) ve `ANDROID_BINDER_IPC` sembolünün de seçilmiş olması şartlarının aynı anda sağlanması istenmiştir.
+
+Örnek dosyamızın son kısımlarında açılan `if` bloğunun `endif` ile, en başta açılan `menu` bloğunun ise `endmenu` ile kapatıldığını görmekteyiz.
+
+Aşağıdaki örneklerde bu menü için 64bit aktif iken `ANDROID` sembolünün değerleri için oluşan çıktıları görebilirsiniz:
+
+| ![](config_menu.png) |
+|:---------------------------------:|
+| `ANDROID` sembolü seçili değilken |
+
+| ![](config_menu_selected.png) |
+|:------------------------------------:|
+| `ANDROID` sembolü seçili durumdayken |
+
+
+### Kconfig Sembol Tipleri
+
+Yukarıda Kconfig sistematiği içerisinde kullanabildiğimiz `bool` tipini örnekle görmüştük. Kconfig içerisinde kullanılabilecek tiplerin tamamı ise aşağıdaki tabloda yer almaktadır.
+
+| Sembol_Tipi     | Açıklama |
+|:----------------|:---------|
+| **bool**        | Evet/Hayır türünden boolean seçim imkanı verir |
+| **tristate**    | `bool` tipine 3. bir durumun daha eklenmesiyle bir özelliğin modül olarak derlenebilmesi için gereken seçimin de yapılabilmesine imkan verir. Bu sayede örneğin `FAT` dosya sistemi desteği için hayır (**n**), evet (**y**) ve modül (**m**) şeklinde 3 alternatiften birinin belirtilebilmesi mümkün olur. En çok kullanılan sembol tipi budur. |
+| **string**      | Değer olarak herhangi bir metin alır |
+| **hex**         | 16'lık düzende nümerik veri alır |
+| **int**         | 10'luk düzende nümerik veri alır |
+
+Nümerik sembol tipleri ayrıca opsiyonel olarak bir aralık belirtilmesine olanak veren **range** deyimine de sahiptir. Aşağıdaki örnekte `PM_WAKELOCKS_LIMIT` sembolünün `int` tipinde tanımlandığı, öntanımlı değerinin 100 ve geçerli değer aralığının 0 - 100000 arasında olduğu belirtilmektedir.
+
+```
+config PM_WAKELOCKS_LIMIT
+        int "Maximum number of user space wakeup sources (0 = no limit)"
+        range 0 100000
+        default 100
+        depends on PM_WAKELOCKS
+```
+
+`Kconfig` dosyalarında girinti seviyeleri (_indentation_) önemlidir, mevcut örneklere baktığınızda bunu kolaylıkla anlayabilirsiniz. Ana konumuzdan uzaklaşmamak adına diğer detaylara girmeyip burada sonlandırıyoruz.
+
+> **Not**: Kbuild ve Kconfig sistemi özel olarak Linux kernel projesi için geliştirilmiştir. Ancak eğer sizin de birbirini etkileyen bileşenler arasında seçim yapmak suretiyle derleme yapmanız gereken büyük bir projeniz varsa, bu sistemi aynen kullanabilirsiniz. Keza `busybox` gibi çeşitli projelerde de Kbuild sistemi kullanılmaktadır.
+
+### Konfigürasyon Dosyası Formatı
+
+Üretmeye çalışacağımız `.config` dosyasının formatı aşağıdaki gibidir:
+
+```
+...
+# CONFIG_VIDEO_FIXED_MINOR_RANGES is not set
+CONFIG_DVB_CORE=m
+CONFIG_DVB_NET=y
+CONFIG_TTPCI_EEPROM=m
+CONFIG_DVB_MAX_ADAPTERS=8
+CONFIG_DVB_DYNAMIC_MINORS=y
+...
+```
+
+Yukarıda görülen sembol isimleri, `Kconfig` sistemi içerisindeki sembollerin önüne `CONFIG_` öneki getirilerek oluşturulur.
+
+Dosya içerisinde 4 farklı türde satır olduğunu göreceğiz. Bunlar:
+
+* **Yorum Satırları**: Diyez karakteri ile başlayan satırlar yorum satırı olarak nitelenir ve değerlendirmeye alınmazlar.
+
+* **=y İle Biten Satırlar**: İlgili sembolün nitelediği bileşenlerin, oluşacak nihai kernel imajı içerisinde yer almasının istendiğini belirtir.
+
+* **=m İle Biten Satırlar**: İlgili sembolün nitelediği bileşenlerin, oluşacak nihai kernel imajı içerisine konulmamasını ancak ayrı bir modül olarak derlenmesinin istendiğini belirtir.
+
+* **..XXX=8, YYY=Z Şeklindeki Satırlar**: Bu şekildeki satırlar genel olarak derleme sürecinde bazı parametrik işlemlerin yapılabilmesine olanak sağlamak amacıyla kullanılır, örneğin yukarıdaki örneğimizde maksimum DVB adaptör kart sayısının 8 ile sınırlandırıldığını görmekteyiz. Burada tanımlı değer Makefile sistematikleri üzerinden derleme sürecine doğru şekilde aktarıldığında, ilgili DVB kaynak kodları derlenirken bu limit dikkate alınacaktır.
+
+### Konfigürasyon Araçları
+
+Konfigürasyon dosyasını elle oluşturmak pratikte imkansız ve zaten gereksizdir. `Kconfig` dosyalarını analiz edip bize seçim yapma noktasında yardımcı olacak çeşitli araçlar mevcuttur. Bu araçlar da kaynak kod şeklinde Linux kernel projesi içerisindeki `scripts/kconfig` dizininde yer alır. Kullanılabilmeleri için öncelikle derlenmeleri gereklidir.
+
+Bu dizinde birden fazla yardımcı araç bulunur. Her biri aynı işi hedefleyen, farklı arayüzlere sahip araçlardır.
+
+Yöntem      | Açıklama | İhtiyaç Duyulan Kütüphaneler
+------      | -------- | ----------------------------
+**xconfig** | Qt-4 backend | qt4-dev
+**gconfig** | Gtk-2 backend | gtk-2-dev, libglade-2-dev
+**nconfig** | Ncurses backend | libncurses-dev
+**menuconfig** | curses backend | libncurses-dev
+
+Konfigürasyona başlamak için bu araçlardan birini kullanabilirsiniz. En sık kullanılan **menuconfig** aracını aşağıdaki şekilde başlatabilirsiniz:
+
+```
+$ make menuconfig
+```
+
+![](menuconfig.png)
+
+**menuconfig** aracı içerisinde yön tuşları ile gezebilir, **Help** bölümünden seçili başlık hakkında yardım alabilirsiniz. Belirli bir sembol için arama yapmak istediğinizde **/** kısayolunu kullanabilirsiniz (vi editöründeki ile aynı şekilde)
+
+Konfigürasyon işlemi tamamlandıktan sonra tüm menülerden çıkış yapabilirsiniz. Uygulama sonlanmadan hemen önce yapılan konfigürasyonu kaydetmek isteyip istemediğiniz sorulacaktır.
+
+
+
+
